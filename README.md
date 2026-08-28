@@ -49,18 +49,19 @@ zodat je API-key nooit in de browser terechtkomt.
 
 ## Skills aansluiten
 
-Alle skills staan al in het menu (`src/App.jsx`, `COURSES`-array), maar
-alleen **Messaging Plan** en **Caption Writer** zijn nu live (`wired: true`).
+Alle 23 skills staan in het menu (`src/App.jsx`, `COURSES`-array) én zijn
+live (`wired: true`), met een systeemprompt in het `SYSTEM_PROMPTS`-object
+die gecomprimeerd is uit het bijbehorende `.skill`-bestand.
 
-Om een volgende skill aan te sluiten:
-1. Pak de tekst uit het bijbehorende `.skill`-bestand (of de finetune die je
-   er nog voor schrijft).
-2. Comprimeer 'm tot een systeemprompt en voeg toe aan het
-   `SYSTEM_PROMPTS`-object in `src/App.jsx` (key = skill `id` uit `COURSES`).
-3. Zet `wired: true` bij die skill in de `COURSES`-array.
+Ga je een skill finetunen (scherper maken, andere output-regels, etc.)?
+1. Pas het `.skill`-bestand aan zoals je gewend bent.
+2. Vraag Claude Code om de bijgewerkte tekst te comprimeren tot een nieuwe
+   systeemprompt en de bestaande entry in `SYSTEM_PROMPTS` in `src/App.jsx`
+   te vervangen (key = skill `id` uit `COURSES`).
 
-Vraag Claude Code gerust om dit voor je te doen — geef 'm het `.skill`-bestand
-en laat 'm de stappen hierboven uitvoeren.
+Wil je een skill juist tijdelijk uitzetten (bijv. tijdens het herschrijven)?
+Zet `wired: false` bij die skill in de `COURSES`-array — de kaart toont dan
+weer een "Binnenkort"-badge in plaats van "Open".
 
 ## Deployen
 

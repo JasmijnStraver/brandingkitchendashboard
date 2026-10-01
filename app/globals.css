@@ -1,0 +1,194 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --midnight: #3d1419;
+  --burgundy: #6b1a2a;
+  --pepper: #c8001a;
+  --gold: #c9a060;
+  --creme: #f5f0eb;
+  --bg: #f5f0eb;
+  --surface: #ffffff;
+  --surface-2: #fbf8f4;
+  --ink: #3d1419;
+  --muted: rgba(61, 20, 25, 0.64);
+  --line: rgba(61, 20, 25, 0.14);
+  --side: #3d1419;
+  --deep: #3d1419;
+  --font-display: "Times New Roman", Times, "Liberation Serif", serif;
+  --font-body: var(--be-vietnam-pro), "Helvetica Neue", Arial, sans-serif;
+  --font-accent: var(--karumbi), "Segoe Script", "Brush Script MT", cursive;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1e0a0d;
+    --surface: #2a1015;
+    --surface-2: #240d11;
+    --ink: #f5f0eb;
+    --muted: rgba(245, 240, 235, 0.64);
+    --line: rgba(245, 240, 235, 0.14);
+    --side: #140609;
+    --deep: #140609;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1e0a0d;
+  --surface: #2a1015;
+  --surface-2: #240d11;
+  --ink: #f5f0eb;
+  --muted: rgba(245, 240, 235, 0.64);
+  --line: rgba(245, 240, 235, 0.14);
+  --side: #140609;
+  --deep: #140609;
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+p {
+  margin: 0;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 3px;
+  padding: 0.62rem 1.1rem;
+  border: 1px solid var(--burgundy);
+  background: var(--burgundy);
+  color: var(--creme);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+  text-decoration: none;
+}
+.btn:hover {
+  background: var(--midnight);
+  border-color: var(--midnight);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+.btn.ghost:hover {
+  border-color: var(--gold);
+}
+.btn.gold {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--midnight);
+}
+.btn.gold:hover {
+  background: var(--creme);
+  border-color: var(--creme);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+.field input,
+.field select,
+.field textarea {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--ink);
+  width: 100%;
+}
+.field textarea {
+  min-height: 5.5rem;
+  resize: vertical;
+  line-height: 1.55;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--gold);
+  outline: none;
+}
+
+.pill {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.15rem 0.55rem;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.pill.klaar {
+  background: color-mix(in srgb, var(--gold) 24%, transparent);
+  color: var(--ink);
+}
+.pill.bezig {
+  background: var(--burgundy);
+  color: var(--creme);
+}
+.pill.open {
+  border: 1px solid var(--burgundy);
+  color: var(--ink);
+}
+.pill.dicht {
+  background: var(--line);
+  color: var(--muted);
+}

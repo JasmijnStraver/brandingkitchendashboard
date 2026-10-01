@@ -1,76 +1,77 @@
-# Studio Crave — Skills Dashboard
+# Studio Crave — Klantportaal (The Branding Kitchen™)
 
-Klanten-dashboard met de 7-Course Brand Method als menu, plus een bonus-gang
-("Digestief") voor groei- en planningstools. Elke Course is een gang, elke
-skill een kaart. Klikken op "Open" start een chat die de bijbehorende
-skill-instructies gebruikt.
+Next.js + Supabase-app voor het klantportaal van Studio Crave: de 7-Course
+Brand Method als menu, met persoonlijke login, skills die via Claude
+schrijven in de taal van de klant, en een admin-"keuken" om klanten,
+documenten en skills te beheren.
 
-Klanten loggen in met naam + persoonlijke toegangscode (zie "Klanten
-beheren" hieronder) voordat ze het menu zien.
+Dit is de live-opvolger van `prototype-reference/` — de werkende HTML/JS-demo
+die als ontwerp en logica diende. Zie [`STATUS.md`](./STATUS.md) voor precies
+wat al 1:1 is overgezet en wat nog in de demo staat.
 
-## Starten in Claude Code
+## Starten
 
-1. Open deze map in Claude Code (`claude` in de terminal, in deze projectmap).
-2. Vraag Claude Code om te installeren en te starten:
-   ```
-   npm install
-   npm run dev
-   ```
-3. Ga naar de lokale URL die Vite toont (meestal `http://localhost:5173`).
-4. Log in met naam `Demo` en toegangscode `PROEFGANG` om het dashboard te zien.
-
-## Klanten beheren
-
-Klanten en hun toegangscode staan in `src/clients.js`. Voeg een regel toe
-per klant:
-
-```js
-export const CLIENTS = [
-  { name: "Demo", code: "PROEFGANG" },
-  { name: "Anne", code: "ANNE2024" },
-];
+```
+npm install
+cp .env.example .env.local   # vul in met je Supabase-project
+npm run dev
 ```
 
-Er zit geen wachtwoord-hashing of database achter — dit is een lichte
-toegangsdrempel voor een klein aantal klanten, geen zware auth-laag. Vraag
-Claude Code om dit later uit te breiden (bijv. met Supabase auth) als het
-klantenaantal groeit.
+Zonder een Supabase-project opstart de app gewoon (je ziet het inlogscherm),
+maar elke pagina die data nodig heeft werkt pas zodra stap 1-3 hieronder zijn
+gedaan.
 
-## De API laten werken
+## Supabase opzetten (eenmalig)
 
-Dit project praat met Claude via een eigen serverless functie (`api/chat.js`),
-zodat je API-key nooit in de browser terechtkomt.
+1. **Project aanmaken** op [supabase.com](https://supabase.com), regio
+   **Frankfurt (EU)**.
+2. **Schema uitvoeren**, in de SQL-editor, in deze volgorde:
+   - `supabase/01-schema.sql`
+   - `supabase/02-skills.sql`
+   - `supabase/03-vragenlijst.sql`
+3. **Jezelf admin maken**: registreer een account (via `/login` nadat je de
+   env-variabelen hieronder hebt gezet, of via het Supabase-dashboard), en
+   zet in tabel `profiles` jouw rol op `admin`:
+   ```sql
+   update public.profiles set role = 'admin' where id = (select id from auth.users where email = 'jouw@email.nl');
+   ```
+4. **Env-variabelen**: kopieer `.env.example` naar `.env.local` en vul
+   `NEXT_PUBLIC_SUPABASE_URL` en `NEXT_PUBLIC_SUPABASE_ANON_KEY` in
+   (Project-instellingen → API).
+5. **Edge Functions deployen** (met de [Supabase CLI](https://supabase.com/docs/guides/cli)):
+   ```
+   supabase functions deploy run-skill
+   supabase functions deploy platform-update
+   supabase functions deploy uitnodigen
+   ```
+6. **Secrets zetten** voor de Edge Functions:
+   ```
+   supabase secrets set ANTHROPIC_API_KEY=... PORTAAL_URL=https://jouw-domein.nl
+   ```
+7. **Mail**: plak `supabase/email-uitnodiging.html` en
+   `supabase/email-wachtwoord.html` in Authentication → Email Templates, en
+   koppel een maildienst (bijv. Resend) met afzender @studiocrave.nl.
+8. **Cron** voor `platform-update`: Supabase → Integrations → Cron, dagelijks
+   om 06:00.
 
-- Lokaal testen met de API vraagt om `vercel dev` in plaats van `vite dev`
-  (Vite alleen serveert geen `/api`-routes). Vraag Claude Code hierbij te
-  helpen als je dat wilt opzetten.
-- In productie (Vercel): zet een environment variable `ANTHROPIC_API_KEY`
-  met je key van console.anthropic.com.
+## Skills
 
-## Skills aansluiten
-
-Alle 23 skills staan in het menu (`src/App.jsx`, `COURSES`-array) én zijn
-live (`wired: true`), met een systeemprompt in het `SYSTEM_PROMPTS`-object
-die gecomprimeerd is uit het bijbehorende `.skill`-bestand.
-
-Ga je een skill finetunen (scherper maken, andere output-regels, etc.)?
-1. Pas het `.skill`-bestand aan zoals je gewend bent.
-2. Vraag Claude Code om de bijgewerkte tekst te comprimeren tot een nieuwe
-   systeemprompt en de bestaande entry in `SYSTEM_PROMPTS` in `src/App.jsx`
-   te vervangen (key = skill `id` uit `COURSES`).
-
-Wil je een skill juist tijdelijk uitzetten (bijv. tijdens het herschrijven)?
-Zet `wired: false` bij die skill in de `COURSES`-array — de kaart toont dan
-weer een "Binnenkort"-badge in plaats van "Open".
+Alle 28 skills (`supabase/02-skills.sql`) staan al in de database, inclusief
+hun volledige instructie als eerste versie. Een skill bewerken of een nieuwe
+versie publiceren doe je in de app zelf, onder **Keuken → Skills beheer** —
+dat schrijft weg naar de tabellen `skills` en `skill_versions`, niet naar
+bestanden. De brondocumenten staan ook in `skills/plugins/` en `skills/eigen/`
+als referentie en als basis voor nieuwe skills.
 
 ## Deployen
 
-Zelfde flow als je andere projecten: push naar GitHub, koppel de repo aan
-Vercel, zet de `ANTHROPIC_API_KEY` environment variable in de Vercel
-project-instellingen.
+Push naar GitHub, koppel de repo aan Vercel, zet dezelfde env-variabelen
+(`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`) in de
+Vercel-projectinstellingen.
 
 ## Merkstijl
 
-Bordeaux (`#3E1017` / `#5C1A24`) + rood (`#C21E2C`) op een warme
-creme-achtergrond, Barlow Condensed voor koppen (bold/black), Inter voor
-body-tekst — consistent met de Studio Crave huisstijl.
+Midnight (`#3D1419`), burgundy (`#6B1A2A`), pepper (`#C8001A`) en gold
+(`#C9A060`) op een warme crème-achtergrond. Koppen in serif (Times New
+Roman), body in Be Vietnam Pro, korte accenten in het ingebedde lettertype
+Karumbi — zie `app/globals.css` en `public/fonts/`.
